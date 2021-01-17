@@ -19,10 +19,15 @@
 
 /// Update LEDs to match lower 4 bits of counter
 void update_leds(uint8_t value) {
+  static uint16_t last_value = ~0;
+  if (last_value != value) {
+    printf("The current value of counter is %d\n", value);
+  }
   nrf_gpio_pin_write(LED4, !(value & 0b0001));
   nrf_gpio_pin_write(LED3, !(value & 0b0010));
   nrf_gpio_pin_write(LED2, !(value & 0b0100));
   nrf_gpio_pin_write(LED1, !(value & 0b1000));
+  last_value = value;
 }
 
 int main(void) {
@@ -64,7 +69,7 @@ int main(void) {
       db = false;
     }
 
-    printf("The current value of counter is %d\n", counter);
+    counter &= 0xF;
     update_leds(counter);
   }
 }
