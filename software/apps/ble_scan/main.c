@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "simple_ble.h"
 
@@ -33,7 +34,50 @@ void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
   uint8_t* adv_buf = adv_report->data.p_data; // array of up to 31 bytes of advertisement payload data
   uint16_t adv_len = adv_report->data.len; // length of advertisement payload data
 
-  printf("Received an advertisement!\n");
+  if (ble_addr[5] == 0xc0 &&
+      ble_addr[4] == 0x98 &&
+      ble_addr[3] == 0xe5)
+  {
+    // Print bytes
+    printf("Found desired device\nRaw payload:\n");
+    for (int i = 0; i < adv_len; i++) {
+      printf("%x ", adv_buf[i]);
+    }
+    printf("\n");
+
+    // Print parsed bytes
+    for (size_t offset = 0; offset < adv_len; offset++) {
+      const uint8_t* base = adv_buf + offset;
+      const uint8_t ad_len = base[0];
+      const uint8_t ad_type = base[1];
+      const uint8_t* data = base + 2;
+      switch (ad_type) {
+        case 0x1: {
+          printf("Flags: 0x%x\n", *data);
+          break;
+        }
+        case 0x9: {
+          printf("Name: %.*s\n", ad_len - 1, data);
+          break;
+        }
+        case 0xff: {
+          printf("MSD (as string): %s\n", data);
+          printf("MSD (raw) \n");
+          goto print_adv_bytes;
+        }
+        default: {
+          printf("Unrecognized AD type (0x%x): ", ad_type);
+print_adv_bytes:
+          for (size_t i = 0; i < ad_len - 1; i++) {
+            printf("%x ", data[i]);
+          }
+          printf("\n");
+        }
+      }
+      offset += ad_len;
+    }
+    printf("\n");
+  }
 }
 
 

@@ -36,11 +36,8 @@ int main(void) {
   // Note: simple BLE is our own library. You can find it in `nrf5x-base/lib/simple_ble/`
   simple_ble_app = simple_ble_init(&ble_config);
 
-  // Start Advertising
-  uint8_t ble_data[] = {0x02, 0x01, 0x06, 0x06, 0xff, 'h', 'e', 'l', 'l', 'o'};
-  STATIC_ASSERT(BLE_GAP_ADV_SET_DATA_SIZE_MAX >= sizeof(ble_data));
 
-  simple_ble_adv_raw(ble_data, sizeof(ble_data));
+  simple_ble_es_with_name("arn.xyz");
   printf("Started BLE advertisements\n");
 
   while(1) {
