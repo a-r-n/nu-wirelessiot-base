@@ -28,6 +28,21 @@ static simple_ble_service_t environmental_sensing_service = {{
               0x00,0x10,0x00,0x00,0x1A,0x18,0x00,0x00}
 }};
 
+static simple_ble_char_t elevation_char = {.uuid16 = 0x2a6c};
+static const uint8_t elevation[3] = {0x9f, 0x48, 0x00};
+
+static simple_ble_char_t pressure_char = {.uuid16 = 0x2a6d};
+static const uint32_t pressure = 1024265;
+
+static simple_ble_char_t temperature_char = {.uuid16 = 0x2a6e};
+static const int16_t temperature = -222;
+
+static simple_ble_char_t humidity_char = {.uuid16 = 0x2a6f};
+static const uint16_t humidity = 5900;
+
+static simple_ble_char_t true_wind_speed_char = {.uuid16 = 0x2a70};
+static const uint16_t true_wind_speed = 492;
+
 /*******************************************************************************
  *   State for this application
  ******************************************************************************/
@@ -46,6 +61,26 @@ int main(void) {
   simple_ble_app = simple_ble_init(&ble_config);
 
   simple_ble_add_service(&environmental_sensing_service);
+
+  simple_ble_add_characteristic(1, 0, 0, 0,
+      sizeof(elevation), (uint8_t*)&elevation,
+      &environmental_sensing_service, &elevation_char);
+
+  simple_ble_add_characteristic(1, 0, 0, 0,
+      sizeof(pressure), (uint8_t*)&pressure,
+      &environmental_sensing_service, &pressure_char);
+
+  simple_ble_add_characteristic(1, 0, 0, 0,
+      sizeof(temperature), (uint8_t*)&temperature,
+      &environmental_sensing_service, &temperature_char);
+
+  simple_ble_add_characteristic(1, 0, 0, 0,
+      sizeof(humidity), (uint8_t*)&humidity,
+      &environmental_sensing_service, &humidity_char);
+
+  simple_ble_add_characteristic(1, 0, 0, 0,
+      sizeof(true_wind_speed), (uint8_t*)&true_wind_speed,
+      &environmental_sensing_service, &true_wind_speed_char);
 
   // Start Advertising
   simple_ble_adv_only_name();
