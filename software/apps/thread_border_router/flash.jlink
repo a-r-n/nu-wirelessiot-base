@@ -1,0 +1,5 @@
+r
+loadfile ot-rcp-nrf52840dk.hex 
+r
+g
+exit
