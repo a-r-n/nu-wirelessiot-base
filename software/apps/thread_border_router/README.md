@@ -26,7 +26,9 @@ of the dev kit (**not** the normal USB port which connects to JTAG). You also
 have to flip the "nRF Power Switch" in the middle of the board to "USB".
 
 No LEDs will turn on when you've plugged it in, but if everything is correct,
-it will appear as a device to attach to your VM.
+it will appear as a device to attach to your VM. The name of the device will
+no longer be "Segger", but will now be "OpenThread Device" (or something like
+that).
 
 ## Unattaching the RCP
 
@@ -43,9 +45,9 @@ To use this you need to install docker and docker compose
 Ubuntu instructions:
 
 ```shell
+$ sudo apt install curl libffi-dev libssl-dev python3 python3-pip
 $ curl -sSL https://get.docker.com | sh
-$ sudo usermod -aG docker pi
-$ sudo apt install libffi-dev libssl-dev python3 python3-pip
+$ sudo usermod -aG docker <YOUR_USERNAME_HERE>
 $ sudo pip3 install docker-compose
 ```
 
