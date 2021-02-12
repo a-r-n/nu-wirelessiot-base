@@ -1,0 +1,14 @@
+{
+  "name": "coap-examples",
+  "version": "1.0.0",
+  "description": "CoAP examples to use with Thread",
+  "main": "coap-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Branden Ghena",
+  "license": "ISC",
+  "dependencies": {
+    "coap": "^0.24.0"
+  }
+}
