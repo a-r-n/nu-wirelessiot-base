@@ -90,7 +90,7 @@ BOARD_SOURCES += \
 	nrf_ble_qwr.c\
 	nrf_sdh.c\
 	nrf_sdh_ble.c\
-	simple_ble.c\
+	#simple_ble.c\
 
 endif
 
