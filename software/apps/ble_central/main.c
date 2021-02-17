@@ -49,10 +49,8 @@
 
 #define NRF_BLE_SCAN_BUFFER 31
 #define NRF_BLE_SCAN_OBSERVER_PRIO 1
-#define NRF_BLE_SCAN_FILTER_ENABLE 1
+#define NRF_BLE_SCAN_FILTER_ENABLE 0
 #define BLE_LBS_C_ENABLED 1
-
-#define NRF_MODULE_ENABLE_ALL 1
 
 #include "nrf_sdh.h"
 #include "nrf_sdh_ble.h"
@@ -101,7 +99,7 @@ BLE_LBS_C_DEF(m_ble_lbs_c);                                     /**< Main struct
 NRF_BLE_GATT_DEF(m_gatt);                                       /**< GATT module instance. */
 BLE_DB_DISCOVERY_DEF(m_db_disc);                                /**< DB discovery module instance. */
 
-static char const m_target_periph_name[] = "Nordic_Blinky";     /**< Name of the device we try to connect to. This name is searched in the scan report data*/
+static char const m_target_periph_name[] = "CS397/497"  ;     /**< Name of the device we try to connect to. This name is searched in the scan report data*/
 
 
 /**@brief Function to handle asserts in the SoftDevice.
@@ -136,6 +134,8 @@ static void leds_init(void)
 static void scan_start(void)
 {
     ret_code_t err_code;
+
+    m_scan.scan_params.filter_policy = BLE_GAP_SCAN_FP_ACCEPT_ALL;
 
     err_code = nrf_ble_scan_start(&m_scan);
     APP_ERROR_CHECK(err_code);
@@ -188,6 +188,12 @@ static void lbs_c_evt_handler(ble_lbs_c_t * p_lbs_c, ble_lbs_c_evt_t * p_lbs_c_e
 }
 
 
+void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
+    printf("Printf works\n");
+    NRF_LOG_INFO("Ble adv callback");
+}
+
+
 /**@brief Function for handling BLE events.
  *
  * @param[in]   p_ble_evt   Bluetooth stack event.
@@ -197,8 +203,9 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 {
     ret_code_t err_code;
 
-    // For readability.
     ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
+
+    NRF_LOG_INFO("Test\n");
 
     switch (p_ble_evt->header.evt_id)
     {
@@ -225,6 +232,16 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
         {
             NRF_LOG_INFO("Disconnected.");
             scan_start();
+        } break;
+
+        case BLE_GAP_EVT_ADV_REPORT:
+        {
+            // NRF_LOG_INFO("Call to ble_evt_handler");
+            ble_gap_evt_adv_report_t const* adv_report = &(p_ble_evt->evt.gap_evt.params.adv_report);
+            uint8_t const* ble_addr = adv_report->peer_addr.addr; // array of 6 bytes of the address
+            // uint8_t* adv_buf = adv_report->data.p_data; // array of up to 31 bytes of advertisement payload data
+            // uint16_t adv_len = adv_report->data.len; // length of advertisement payload data
+            NRF_LOG_INFO("ble_addr: %p\n", (uint64_t*)ble_addr);
         } break;
 
         case BLE_GAP_EVT_TIMEOUT:
@@ -275,6 +292,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
         } break;
 
         default:
+            NRF_LOG_INFO("Default");
             // No implementation needed.
             break;
     }
@@ -451,17 +469,17 @@ static void scan_init(void)
 
     memset(&init_scan, 0, sizeof(init_scan));
 
-    init_scan.connect_if_match = true;
+    init_scan.connect_if_match = false;
     init_scan.conn_cfg_tag     = APP_BLE_CONN_CFG_TAG;
 
     err_code = nrf_ble_scan_init(&m_scan, &init_scan, scan_evt_handler);
     APP_ERROR_CHECK(err_code);
 
-    // Setting filters for scanning.
-    err_code = nrf_ble_scan_filters_enable(&m_scan, NRF_BLE_SCAN_NAME_FILTER, false);
+    err_code = nrf_ble_scan_filter_set(&m_scan, SCAN_NAME_FILTER, m_target_periph_name);
     APP_ERROR_CHECK(err_code);
 
-    err_code = nrf_ble_scan_filter_set(&m_scan, SCAN_ADDR_FILTER, m_target_periph_name);
+    // Setting filters for scanning.
+    err_code = nrf_ble_scan_filters_enable(&m_scan, NRF_BLE_SCAN_NAME_FILTER, false);
     APP_ERROR_CHECK(err_code);
 }
 
@@ -510,6 +528,7 @@ int main(void)
     // Enter main loop.
     for (;;)
     {
+        NRF_LOG_INFO("Blinky CENTRAL example going.");
         idle_state_handle();
     }
 }
