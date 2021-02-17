@@ -26,7 +26,7 @@ APP_TIMER_DEF(coap_send_timer);
 // Note: this is a NAT64 translated address. The bottom part is an IPv4 address
 // and should be your local host IPv4 address for the computer running the
 // border router and CoAP server.
-#define COAP_SERVER_ADDR "2001:db8:1:ffff::192.168.158.128"
+#define COAP_SERVER_ADDR "2001:db8:1:ffff::10.0.0.241"
 static otIp6Address coap_ipv6_address = {0};
 
 // Callback for CoAP responses

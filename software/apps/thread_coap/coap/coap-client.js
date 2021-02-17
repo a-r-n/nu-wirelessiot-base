@@ -3,7 +3,7 @@
 var coap  = require('coap')
 
 // put your own local IP address here to test the CoAP server
-var request = coap.request({'host': '192.168.158.128', 'port': 5683, 'method': 'GET'});
+var request = coap.request({'host': '10.0.0.241', 'port': 5683, 'method': 'GET'});
 
 request.on('response', function(response) {
   console.log("Response received!");
