@@ -1,6 +1,0 @@
-{
-  "files.associations": {
-    "*.cppsub": "cpp",
-    "string.h": "c"
-  }
-}
